@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>ตรวจสอบ Array ข้าม Execution Context</h1>
+
+  <!-- สร้าง iframe -->
+  <iframe id="myFrame">test</iframe>
+
+  <script>
+    // ดึง reference ของ iframe
+    const iframe = document.getElementById('myFrame');
+    const iframeWindow = iframe.contentWindow;
+
+    // สร้าง array ใน iframe
+    iframe.contentDocument.open();
+    iframe.contentDocument.write(`
+      <script>
+        window.iframeArray = [1, 2, 3];
+      <\/script>
+    `);
+    iframe.contentDocument.close();
+
+    // รอให้ iframe โหลดเสร็จ
+    setTimeout(() => {
+      const arrayFromIframe = iframeWindow.iframeArray;
+
+      console.log('Array จาก iframe:', arrayFromIframe);
+
+      // ตรวจสอบด้วย instanceof
+      console.log('ตรวจสอบด้วย instanceof:', arrayFromIframe instanceof Array); // ❌ false
+
+      // ตรวจสอบด้วย Array.isArray()
+      console.log('ตรวจสอบด้วย Array.isArray():', Array.isArray(arrayFromIframe)); // ✅ true
+    }, 1000);
+  </script>
+</body>
+</html>
